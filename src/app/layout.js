@@ -2,6 +2,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/Theme";
 import Layout from "@/components/Layout";
+import { auth } from "../auth";
+// import QueryProvider from "@/components/query-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -10,17 +12,20 @@ export const metadata = {
   description: "NavUtils - AdminDashboard",
 };
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+  const session = await auth();
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange>
-          <Layout>{children}</Layout>
-        </ThemeProvider>
+        {/* <QueryProvider> */}
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange>
+            <Layout session={session}>{children}</Layout>
+          </ThemeProvider>
+        {/* </QueryProvider> */}
       </body>
     </html>
   );

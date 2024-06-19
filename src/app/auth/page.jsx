@@ -1,26 +1,16 @@
-"use client"
+"use client";
 
 import { SquareUser, BookCopy } from "lucide-react";
 import { FaGithub, FaGoogle, FaDiscord } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { createClient } from "@/utils/supabase/client";
+import { handleSignWithOauth } from "@/utils/signIn";
 
 export default function Page() {
   const tgl = new Date();
-
-  const handleSignWithOauth = (provider) => {
-    const supabase = createClient();
-    supabase.auth.signInWithOAuth({
-      provider: provider,
-      options: {
-        redirectTo: `${location.origin}/auth/callback`,
-      },
-    });
-  };
   return (
-    <div className="justify-center w-full flex h-screen items-center">
-      <div className="w-96 h-72 border p-5 rounded-md space-y-6 font-mono">
+    <div className="justify-center w-full flex h-full pt-40 items-center">
+      <div className="w-96 h-72 border p-5 rounded-md space-y-6 font-mono bg-background/75 shadow-lg shadow-background/5">
         <div className="flex gap-2 items-center flex-row justify-between">
           <div className="flex space-x-2 text-red-500">
             <div className="w-3 h-3 rounded-full bg-red-500"></div>
@@ -28,11 +18,10 @@ export default function Page() {
             <div className="w-3 h-3 rounded-full bg-green-500"></div>
           </div>
           <p className="text-sm">bash</p>
-          {/* <SquareUser />|<span className="text-foreground font-bold text-2xl">NavUtils 🤟</span> */}
         </div>
 
         <div>
-          <span className="text-green-500 ">$ Login or Register 👇</span>
+          <span className="text-green-500 ">$ Login 👇</span>
         </div>
 
         <div className="flex flex-col justify-center items-center gap-2">
