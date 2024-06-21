@@ -1,8 +1,8 @@
 import Image from "next/image";
-import ModeToggle from "@/components/ui/Button_theme";
-export default function Home() {
+import ModeToggle from "@/components/ui/button_theme";
+export default async function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
+    <main className="flex min-h-full flex-col items-center justify-between p-24">
       <ModeToggle />
     </main>
   );
