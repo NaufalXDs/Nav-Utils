@@ -1,0 +1,35 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Siswa {
+  absen       Int          @id //@default(autoincrement())
+  nama        String
+  alfa        Int          @default(0)
+  sakit       Int          @default(0)
+  izin        Int          @default(0)
+  hadir       Int          @default(0)
+  hadirtelat  Int          @default(0)
+  uid         String       @default("fill uid")
+  DataAbsensi DataAbsensi[]
+}
+
+model DataAbsensi {
+  absen     Int      @id
+  nama      String
+  status    String
+  create_at DateTime? @default(now()) @db.DateTime(0)
+  update_at DateTime? @default(now()) @map("update_at") @db.DateTime(0)
+  Siswa     Siswa    @relation(fields: [absen], references: [absen])
+}
