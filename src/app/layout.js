@@ -17,15 +17,15 @@ export default async function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        {/* <QueryProvider> */}
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange>
-            <Layout session={session}>{children}</Layout>
-          </ThemeProvider>
-        {/* </QueryProvider> */}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange>
+          <Layout session={session}>
+            {children}
+          </Layout>
+        </ThemeProvider>
       </body>
     </html>
   );
