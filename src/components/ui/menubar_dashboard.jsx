@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/menubar";
 export default function Menubar_dashboard() {
   return (
-    <div className="flex justify-center">
+    <div className="flex justify-center top-0">
       <Menubar>
         <MenubarMenu>
           <MenubarTrigger>File</MenubarTrigger>

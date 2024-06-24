@@ -1,20 +1,30 @@
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
-import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
-import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import Layout from "@/components/Layout";
 import React from "react";
 import Menubar_dashboard from "@/components/ui/menubar_dashboard";
+import { columns } from "./columns";
+import axios from "axios";
+import { DataTable } from "./data-table";
 
 export const metadata = {
   title: "NavUtils | Dashboard",
   description: "Website Dashboard by navdev",
 };
 
-export default function Dashboard() {
+async function getData() {
+  const base_url = process.env.NEXT_PUBLIC_BASE_URL;
+  try {
+    const response = await axios.get(`${base_url}` + "/api/absen/");
+    return response.data;
+  } catch (error) {
+    console.error(error.message);
+  }
+}
+
+export default async function Dashboard() {
+  const data = await getData();
   return (
-    <>
-      <Menubar_dashboard />
-      
-    </>
+    <div className="container mx-auto py-10 min-h-full">
+      {/* <Menubar_dashboard /> */}
+      <DataTable columns={columns} data={data} />
+    </div>
   );
 }

@@ -1,7 +1,12 @@
 import { PrismaClient } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
-
 const prisma = new PrismaClient();
+
+export const corsHeaders = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
+};
 
 export const GET = async (req) => {
     try {
@@ -9,36 +14,42 @@ export const GET = async (req) => {
             include: {
                 Siswa: {
                     select: {
-                        alfa: true,
+                        hadir: true,
                         sakit: true,
                         izin: true,
-                        hadir: true,
-                        uid: true,
+                        alfa: true,
+                        uuid: true,
                     },
                 },
             },
         });
-        return NextResponse.json(absensi, { status: 200 });
+        return NextResponse.json(absensi, {
+            status: 200,
+            headers: { ...corsHeaders },
+        });
     } catch (error) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        return NextResponse.json({ error: error.message }, {
+            status: 500,
+            headers: { ...corsHeaders }
+        });
     }
 };
 
 export const POST = async (req) => {
     const body = await req.json();
-    const { absen, nama, uid, status } = body;
+    const { absen, nama, uuid, status } = body;
     try {
         const siswa = await prisma.siswa.upsert({
             where: { absen: absen },
-            update: { nama: nama, uid: uid },
-            create: { absen: absen, nama: nama, uid: uid }
+            update: { nama: nama, uuid: uuid },
+            create: { absen: absen, nama: nama, uuid: uuid }
         });
 
         const dataAbsensi = await prisma.dataAbsensi.create({
             data: {
                 absen: absen,
                 nama: nama,
-                status: status,
+                status: status.charAt(0).toUpperCase() + status.slice(1),
             }
         });
 
@@ -51,7 +62,7 @@ export const POST = async (req) => {
 export const PUT = async (req) => {
     try {
         const body = await req.json();
-        const { absen, status, alfa, sakit, izin, hadir, hadirtelat, uid } = body;
+        const { absen, status, alfa, sakit, izin, hadir, hadirtelat, uuid } = body;
 
         const updatedSiswa = await prisma.siswa.update({
             where: { absen: Number(absen) },
@@ -61,14 +72,15 @@ export const PUT = async (req) => {
                 ...(izin !== undefined && { izin }),
                 ...(hadir !== undefined && { hadir }),
                 ...(hadirtelat !== undefined && { hadirtelat }),
-                ...(uid !== undefined && { uid }),
+                ...(uuid !== undefined && { uuid }),
             },
         });
 
         const updatedDataAbsensi = await prisma.dataAbsensi.update({
             where: { absen: Number(absen) },
             data: {
-                ...(status !== undefined && { status }),
+                ...(status !== undefined && { status: status.charAt(0).toUpperCase() + status.slice(1) }),
+                updateAt: new Date(),
             },
             include: {
                 Siswa: {
@@ -77,7 +89,7 @@ export const PUT = async (req) => {
                         sakit: true,
                         izin: true,
                         hadir: true,
-                        uid: true,
+                        uuid: true,
                     },
                 },
             },
@@ -93,10 +105,14 @@ export const DELETE = async (req) => {
     try {
         const body = await req.json();
         const { absen } = body;
-        await prisma.dataAbsensi.delete({
+        const deletedDataAbsensi = await prisma.dataAbsensi.delete({
             where: { absen: Number(absen) },
         });
-        return NextResponse.json(null, { status: 204 });
+
+        const deletedSiswa = await prisma.siswa.delete({
+            where: { absen: Number(absen) },
+        });
+        return NextResponse.json({ deletedDataAbsensi, deletedSiswa }, { status: 200 });
     } catch (error) {
         return NextResponse.json({
             error: error.message
