@@ -1,8 +1,9 @@
 import React from "react";
-import Menubar_dashboard from "@/components/ui/menubar_dashboard";
 import { columns } from "./columns";
 import axios from "axios";
+import { auth } from "@/auth";
 import { DataTable } from "./data-table";
+import { useSession } from "next-auth/react";
 
 export const metadata = {
   title: "NavUtils | Dashboard",
@@ -10,7 +11,7 @@ export const metadata = {
 };
 
 async function getData() {
-  const base_url = process.env.NEXT_PUBLIC_BASE_URL;
+  const base_url = process.env.NEXT_URL;
   try {
     const response = await axios.get(`${base_url}` + "/api/absen/");
     return response.data;
@@ -21,9 +22,14 @@ async function getData() {
 
 export default async function Dashboard() {
   const data = await getData();
+  // const session = await useSession();
+  // console.log(session);
+  // if (session?.user.role === "admin") {
+  //   return console.log("admin");
+  // }
   return (
     <div className="container mx-auto py-10 min-h-full">
-      {/* <Menubar_dashboard /> */}
+      {/* <h1>{session?.user?.role}</h1> */}
       <DataTable columns={columns} data={data} />
     </div>
   );

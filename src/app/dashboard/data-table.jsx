@@ -29,7 +29,7 @@ export function DataTable(props) {
   });
   const [openDialog, setOpenDialog] = React.useState(false);
   const [newData, setNewData] = React.useState({
-    absen: parseInt(""),
+    absen: (""),
     nama: String(""),
     status: String(""),
     uuid: String(""),
@@ -62,7 +62,7 @@ export function DataTable(props) {
     }
     lastRefreshTime = currentTime;
 
-    const base_url = process.env.NEXT_PUBLIC_BASE_URL;
+    const base_url = process.env.NEXT_URL;
     try {
       const response = await axios.get(`/api/absen/`);
       setTableData(response.data);
@@ -77,7 +77,7 @@ export function DataTable(props) {
       await axios.post("/api/absen", {
         absen: parseInt(newData.absen),
         nama: String(newData.nama),
-        status: String(newData.status).charAt(0).toUpperCase() + string.slice(1),
+        status: String(newData.status).charAt(0).toUpperCase() + String(newData.status).slice(1),
         uuid: String(newData.uuid),
       });
       alert("Data berhasil disimpan");

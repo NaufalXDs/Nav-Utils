@@ -1,6 +1,5 @@
-import { PrismaClient } from '@prisma/client';
+import { Gprisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
-const prisma = new PrismaClient();
 
 export const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
@@ -10,7 +9,7 @@ export const corsHeaders = {
 
 export const GET = async (req) => {
     try {
-        const absensi = await prisma.dataAbsensi.findMany({
+        const absensi = await Gprisma.dataAbsensi.findMany({
             include: {
                 Siswa: {
                     select: {
@@ -39,17 +38,17 @@ export const POST = async (req) => {
     const body = await req.json();
     const { absen, nama, uuid, status } = body;
     try {
-        const siswa = await prisma.siswa.upsert({
+        const siswa = await Gprisma.siswa.upsert({
             where: { absen: absen },
             update: { nama: nama, uuid: uuid },
             create: { absen: absen, nama: nama, uuid: uuid }
         });
 
-        const dataAbsensi = await prisma.dataAbsensi.create({
+        const dataAbsensi = await Gprisma.dataAbsensi.create({
             data: {
                 absen: absen,
                 nama: nama,
-                status: status.charAt(0).toUpperCase() + status.slice(1),
+                status: status,
             }
         });
 
@@ -64,7 +63,7 @@ export const PUT = async (req) => {
         const body = await req.json();
         const { absen, status, alfa, sakit, izin, hadir, hadirtelat, uuid } = body;
 
-        const updatedSiswa = await prisma.siswa.update({
+        const updatedSiswa = await Gprisma.siswa.update({
             where: { absen: Number(absen) },
             data: {
                 ...(alfa !== undefined && { alfa }),
@@ -76,7 +75,7 @@ export const PUT = async (req) => {
             },
         });
 
-        const updatedDataAbsensi = await prisma.dataAbsensi.update({
+        const updatedDataAbsensi = await Gprisma.dataAbsensi.update({
             where: { absen: Number(absen) },
             data: {
                 ...(status !== undefined && { status: status.charAt(0).toUpperCase() + status.slice(1) }),
@@ -90,6 +89,7 @@ export const PUT = async (req) => {
                         izin: true,
                         hadir: true,
                         uuid: true,
+                        hadirtelat: true,
                     },
                 },
             },
@@ -105,11 +105,11 @@ export const DELETE = async (req) => {
     try {
         const body = await req.json();
         const { absen } = body;
-        const deletedDataAbsensi = await prisma.dataAbsensi.delete({
+        const deletedDataAbsensi = await Gprisma.dataAbsensi.delete({
             where: { absen: Number(absen) },
         });
 
-        const deletedSiswa = await prisma.siswa.delete({
+        const deletedSiswa = await Gprisma.siswa.delete({
             where: { absen: Number(absen) },
         });
         return NextResponse.json({ deletedDataAbsensi, deletedSiswa }, { status: 200 });
