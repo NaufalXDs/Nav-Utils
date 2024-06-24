@@ -21,7 +21,7 @@ model Siswa {
   izin        Int          @default(0)
   hadir       Int          @default(0)
   hadirtelat  Int          @default(0)
-  uid         String       @default("fill uid")
+  uuid         String       @default("fill uuid")
   DataAbsensi DataAbsensi[]
 }
 
@@ -29,7 +29,65 @@ model DataAbsensi {
   absen     Int      @id
   nama      String
   status    String
-  create_at DateTime? @default(now()) @db.DateTime(0)
-  update_at DateTime? @default(now()) @map("update_at") @db.DateTime(0)
+  updateAt  DateTime? @updatedAt
+  createAt   DateTime? @default(now())
   Siswa     Siswa    @relation(fields: [absen], references: [absen])
+}
+
+model User {
+  id            String          @id @default(cuid())
+  name          String?
+  username      String?         @unique
+  email         String?         @unique
+  emailVerified DateTime?
+  image         String?
+  Session       Session[]
+  Account       Account?
+ 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+ 
+model Account {
+  id                       String  @id @default(cuid())
+  userId                   String  @unique
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String? @db.Text
+  access_token             String? @db.Text
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String? @db.Text
+  session_state            String?
+  refresh_token_expires_in Int?
+  user                     User?   @relation(fields: [userId], references: [id])
+ 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+ 
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+ 
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id])
+ 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+ 
+  @@index([userId])
+}
+ 
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+ 
+  @@unique([identifier, token])
 }
