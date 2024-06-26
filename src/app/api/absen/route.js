@@ -1,5 +1,6 @@
 import { Gprisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
+import { GSheetAPI } from '@/app/admin/gsheetapi';
 
 export const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
@@ -11,11 +12,27 @@ export const GET = async (req) => {
     try {
         const { searchParams } = new URL(req.url);
         const absen = searchParams.get('absen');
+        const uuid = searchParams.get('uuid');
 
         let absensi;
         if (absen) {
             absensi = await Gprisma.dataAbsensi.findFirst({
                 where: { absen: Number(absen) },
+                include: {
+                    Siswa: {
+                        select: {
+                            hadir: true,
+                            sakit: true,
+                            izin: true,
+                            alfa: true,
+                            uuid: true,
+                        },
+                    },
+                },
+            });
+        } else if (uuid) {
+            absensi = await Gprisma.dataAbsensi.findFirst({
+                where: { Siswa: { uuid: uuid } },
                 include: {
                     Siswa: {
                         select: {
@@ -135,7 +152,7 @@ export const PUT = async (req) => {
                 },
             },
         });
-
+        GSheetAPI(absen);
         return NextResponse.json({ updatedSiswa, updatedDataAbsensi }, { status: 200 });
     } catch (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });
