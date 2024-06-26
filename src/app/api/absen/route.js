@@ -81,10 +81,14 @@ export const POST = async (req) => {
 };
 
 export const PUT = async (req) => {
-    try {
-        const body = await req.json();
-        const { absen, status, alfa, sakit, izin, hadir, hadirtelat, uuid } = body;
+    const { searchParams } = new URL(req.url);
+    const absenFromParams = searchParams.get('absen');
+    const body = await req.json();
+    const { absen: absenFromBody, status, alfa, sakit, izin, hadir, hadirtelat, uuid } = body;
 
+    const absen = absenFromParams || absenFromBody;
+
+    try {
         const statusFields = ['alfa', 'sakit', 'izin', 'hadir', 'hadirtelat'];
         try {
             if (statusFields.includes(status)) {
