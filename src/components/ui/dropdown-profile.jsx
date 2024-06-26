@@ -1,18 +1,18 @@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import React from "react";
-import UserAvatar from "@/components/Avatar";
 import signOut from "@/utils/signOut";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { auth } from "@/auth";
 
-export default function DropdownProfile({ session }) {
+export default async function DropdownProfile({ session }) {
   return (
     <DropdownMenu className="bg-background">
       <DropdownMenuTrigger asChild>
         <div className="mx-auto">
-          <Avatar className="hover:shadow-gray-100 hover:shadow-xl cursor-pointer transition-all duration-300">
+          <Avatar className="hover:shadow-gray-1000 hover:shadow-xl cursor-pointer transition-all duration-300">
             <AvatarImage src={session.user.image} />
-            <AvatarFallback>{session.user.name[0]}</AvatarFallback>
+            <AvatarFallback>{session.user.name}</AvatarFallback>
           </Avatar>
         </div>
       </DropdownMenuTrigger>
@@ -23,11 +23,17 @@ export default function DropdownProfile({ session }) {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <Link href={`/dashboard`}>Dashboard</Link>
+        {(session.user.role === "SEKRE" || session.user.role === "ADMIN") && (
+          <>
+            <DropdownMenuItem>
+              <Link href={`/dashboard`}>Dashboard</Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+          </>
+        )}
+        <DropdownMenuItem className="cursor-pointer" onClick={() => signOut()}>
+          Logout
         </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem className="cursor-pointer" onClick={() => signOut()}>Logout</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

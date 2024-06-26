@@ -7,10 +7,9 @@ import Image from "next/image";
 import { handleSignWithOauth } from "@/utils/signIn";
 
 export default function Page() {
-  const tgl = new Date();
   return (
     <div className="justify-center w-full flex h-full pt-40 items-center">
-      <div className="w-96 h-72 border p-5 rounded-md space-y-6 font-mono bg-background/75 shadow-lg shadow-background/5">
+      <div className="w-96 h-50 border p-5 rounded-md space-y-6 font-mono bg-background/75 shadow-lg shadow-background/5">
         <div className="flex gap-2 items-center flex-row justify-between">
           <div className="flex space-x-2 text-red-500">
             <div className="w-3 h-3 rounded-full bg-red-500"></div>
@@ -34,7 +33,7 @@ export default function Page() {
             <FaGoogle className="text-2xl" />
             Google
           </Button>
-          <Button
+          {/* <Button
             variant="outline"
             className="bg-stone-950 text-stone-400 border border-stone-400 border-b-4 font-medium overflow-hidden relative px-4 py-2 rounded-md hover:brightness-150 hover:border-t-4 hover:border-b active:opacity-75 outline-none duration-500 group w-full flex flex-row items-center justify-center gap-2"
             onClick={() => handleSignWithOauth("github")}
@@ -42,8 +41,8 @@ export default function Page() {
             <span className="bg-stone-400 shadow-stone-400 absolute -top-[150%] left-0 inline-flex w-full h-[5px] rounded-md opacity-50 group-hover:top-[150%] duration-1000 shadow-[0_0_10px_10px_rgba(0,0,0,0.3)]"></span>
             <FaGithub className="text-2xl" />
             Github
-          </Button>
-          <Button
+          </Button> */}
+          {/* <Button
             variant="outline"
             className="bg-blue-950 text-blue-400 border border-blue-400 border-b-4 font-medium overflow-hidden relative px-4 py-2 rounded-md hover:brightness-150 hover:border-t-4 hover:border-b active:opacity-75 outline-none duration-500 group w-full flex flex-row items-center justify-center gap-2"
             onClick={() => handleSignWithOauth("discord")}
@@ -51,7 +50,7 @@ export default function Page() {
             <span className="bg-blue-400 shadow-blue-400 absolute -top-[150%] left-0 inline-flex w-full h-[5px] rounded-md opacity-50 group-hover:top-[150%] duration-1000 shadow-[0_0_10px_10px_rgba(0,0,0,0.3)]"></span>
             <FaDiscord className="text-2xl" />
             Discord
-          </Button>
+          </Button> */}
         </div>
       </div>
     </div>

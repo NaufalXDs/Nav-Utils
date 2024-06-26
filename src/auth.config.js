@@ -1,11 +1,10 @@
-import { NextAuthOptions } from 'next-auth'
-import GitHub from "next-auth/providers/github"
 import Google from "next-auth/providers/google"
 
 import { PrismaClient } from "@prisma/client"
 const Gprisma = new PrismaClient()
 
 const options = {
+    debug: process.env.NODE_ENV !== "production",
     providers: [Google({
         clientId: process.env.AUTH_GOOGLE_ID,
         clientSecret: process.env.AUTH_GOOGLE_SECRET,
@@ -30,12 +29,6 @@ const options = {
         signIn: async ({ user }) => {
             return user.email.endsWith("@gmail.com");
         },
-        // session({ session, user }) {
-        //     if (user && user.role) {
-        //         session.user.role = user.role;
-        //     }
-        //     return session;
-        // }
         async jwt({ token, user }) {
             if (user) {
                 const userRole = await Gprisma.user.findFirst({

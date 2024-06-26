@@ -106,12 +106,12 @@ export const columns = [
         try {
           await axios.put("/api/absen", {
             absen: dataabsensi.absen,
-            status: status,
+            status: status.toLocaleLowerCase(),
             uuid: uuid,
           });
 
           setOpen2(true);
-          setTimeout(() => setOpen2(false)); // Hide alert after 3 seconds
+          setTimeout(() => setOpen2(false));
         } catch (error) {
           console.error(error.message);
         }

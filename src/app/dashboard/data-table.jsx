@@ -29,7 +29,7 @@ export function DataTable(props) {
   });
   const [openDialog, setOpenDialog] = React.useState(false);
   const [newData, setNewData] = React.useState({
-    absen: (""),
+    absen: "",
     nama: String(""),
     status: String(""),
     uuid: String(""),
@@ -61,8 +61,6 @@ export function DataTable(props) {
       return;
     }
     lastRefreshTime = currentTime;
-
-    const base_url = process.env.NEXT_URL;
     try {
       const response = await axios.get(`/api/absen/`);
       setTableData(response.data);
@@ -77,7 +75,7 @@ export function DataTable(props) {
       await axios.post("/api/absen", {
         absen: parseInt(newData.absen),
         nama: String(newData.nama),
-        status: String(newData.status).charAt(0).toUpperCase() + String(newData.status).slice(1),
+        status: String(newData.status),
         uuid: String(newData.uuid),
       });
       alert("Data berhasil disimpan");
@@ -92,6 +90,9 @@ export function DataTable(props) {
     const options = { weekday: "long", year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit" };
     return new Date(dateString).toLocaleDateString("id-ID", options);
   };
+
+  const options = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
+  const tgl = new Date().toLocaleDateString("id-ID", options);
 
   return (
     <div>
@@ -177,6 +178,7 @@ export function DataTable(props) {
         </Table>
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
+        <p className="bg-background/70 px-2 py-1 rounded-md">{tgl}</p>
         <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
           <ArrowBigLeft />
         </Button>

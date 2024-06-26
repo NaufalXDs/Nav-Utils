@@ -7,6 +7,7 @@ import DropdownProfile from "./ui/dropdown-profile";
 import Link from "next/link";
 
 export default function Navbar({ session }) {
+  // console.log(session)
   return (
     <div className="min-h-[60px] flex flex-row items-center justify-between px-4 py-2 bg-transparent text-foreground">
       <button className="button text-2xl" data-text="NavUtils">

@@ -1,9 +1,8 @@
 import React from "react";
 import { columns } from "./columns";
 import axios from "axios";
-import { auth } from "@/auth";
 import { DataTable } from "./data-table";
-import { useSession } from "next-auth/react";
+import { auth } from "@/auth";
 
 export const metadata = {
   title: "NavUtils | Dashboard",
@@ -22,14 +21,17 @@ async function getData() {
 
 export default async function Dashboard() {
   const data = await getData();
-  // const session = await useSession();
-  // console.log(session);
-  // if (session?.user.role === "admin") {
-  //   return console.log("admin");
+  // const session = await auth();
+  // try {
+  //   if (session.user.role !== "ADMIN") {
+  //     return <p>You are not authorized to view this page!</p>;
+  //   }
+  // } catch (error) {
+  //   console.error("Error checking user role:", error.message);
+  //   return <p>Something went wrong. Please try again later.</p>;
   // }
   return (
     <div className="container mx-auto py-10 min-h-full">
-      {/* <h1>{session?.user?.role}</h1> */}
       <DataTable columns={columns} data={data} />
     </div>
   );
