@@ -9,19 +9,41 @@ export const corsHeaders = {
 
 export const GET = async (req) => {
     try {
-        const absensi = await Gprisma.dataAbsensi.findMany({
-            include: {
-                Siswa: {
-                    select: {
-                        hadir: true,
-                        sakit: true,
-                        izin: true,
-                        alfa: true,
-                        uuid: true,
+        const { searchParams } = new URL(req.url);
+        const absen = searchParams.get('absen');
+
+        let absensi;
+        if (absen) {
+            absensi = await Gprisma.dataAbsensi.findFirst({
+                where: { absen: Number(absen) },
+                include: {
+                    Siswa: {
+                        select: {
+                            hadir: true,
+                            sakit: true,
+                            izin: true,
+                            alfa: true,
+                            uuid: true,
+                        },
                     },
                 },
-            },
-        });
+            });
+        } else {
+            absensi = await Gprisma.dataAbsensi.findMany({
+                include: {
+                    Siswa: {
+                        select: {
+                            hadir: true,
+                            sakit: true,
+                            izin: true,
+                            alfa: true,
+                            uuid: true,
+                        },
+                    },
+                },
+            });
+        }
+
         return NextResponse.json(absensi, {
             status: 200,
             headers: { ...corsHeaders },
@@ -41,7 +63,7 @@ export const POST = async (req) => {
         const siswa = await Gprisma.siswa.upsert({
             where: { absen: absen },
             update: { nama: nama, uuid: uuid },
-            create: { absen: absen, nama: nama, uuid: uuid }
+            create: { absen: absen, nama: nama, uuid: uuid || 'uuid' }
         });
 
         const dataAbsensi = await Gprisma.dataAbsensi.create({
@@ -63,6 +85,21 @@ export const PUT = async (req) => {
         const body = await req.json();
         const { absen, status, alfa, sakit, izin, hadir, hadirtelat, uuid } = body;
 
+        const statusFields = ['alfa', 'sakit', 'izin', 'hadir', 'hadirtelat'];
+        try {
+            if (statusFields.includes(status)) {
+                await Gprisma.siswa.update({
+                    where: { absen: Number(absen) },
+                    data: {
+                        [status]: { increment: 1 }
+                    }
+                });
+                console.log(`Berhasil update status ${status}`);
+            }
+
+        } catch (error) {
+            console.log(error.message);
+        }
         const updatedSiswa = await Gprisma.siswa.update({
             where: { absen: Number(absen) },
             data: {
