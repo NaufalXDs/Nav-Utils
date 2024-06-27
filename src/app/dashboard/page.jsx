@@ -1,8 +1,9 @@
 import React from "react";
 import { columns } from "./columns";
-import axios from "axios";
 import { DataTable } from "./data-table";
 import { auth } from "@/auth";
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
 
 export const metadata = {
   title: "NavUtils | Dashboard",
@@ -12,8 +13,26 @@ export const metadata = {
 async function getData() {
   const base_url = process.env.NEXT_URL;
   try {
-    const response = await axios.get(`${base_url}` + "/api/absen/");
-    return response.data;
+    const response = await prisma.dataAbsensi.findMany({
+      select: {
+        absen: true,
+        nama: true,
+        status: true,
+        createAt: true,
+        updateAt: true,
+        Siswa: {
+          select: {
+            alfa: true,
+            sakit: true,
+            izin: true,
+            hadir: true,
+            hadirtelat: true,
+            uuid: true
+          },
+        },
+      },
+    });
+    return response;
   } catch (error) {
     console.error(error.message);
   }
@@ -21,15 +40,7 @@ async function getData() {
 
 export default async function Dashboard() {
   const data = await getData();
-  // const session = await auth();
-  // try {
-  //   if (session.user.role !== "ADMIN") {
-  //     return <p>You are not authorized to view this page!</p>;
-  //   }
-  // } catch (error) {
-  //   console.error("Error checking user role:", error.message);
-  //   return <p>Something went wrong. Please try again later.</p>;
-  // }
+  const currentMonth = new Date().toLocaleDateString("id-ID", { month: "long" });
   return (
     <div className="container mx-auto py-10 min-h-full">
       <DataTable columns={columns} data={data} />
