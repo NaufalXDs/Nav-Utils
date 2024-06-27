@@ -1,6 +1,6 @@
 import { Gprisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
-import { GSheetAPI } from '@/app/admin/gsheetapi';
+import { GSheetAPI } from '@/lib/gsheetapi';
 
 export const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
@@ -106,21 +106,6 @@ export const PUT = async (req) => {
     const absen = absenFromParams || absenFromBody;
 
     try {
-        const statusFields = ['alfa', 'sakit', 'izin', 'hadir', 'hadirtelat'];
-        try {
-            if (statusFields.includes(status)) {
-                await Gprisma.siswa.update({
-                    where: { absen: Number(absen) },
-                    data: {
-                        [status]: { increment: 1 }
-                    }
-                });
-                console.log(`Berhasil update status ${status}`);
-            }
-
-        } catch (error) {
-            console.log(error.message);
-        }
         const updatedSiswa = await Gprisma.siswa.update({
             where: { absen: Number(absen) },
             data: {
@@ -133,27 +118,36 @@ export const PUT = async (req) => {
             },
         });
 
-        const updatedDataAbsensi = await Gprisma.dataAbsensi.update({
+        const existingDataAbsensi = await Gprisma.dataAbsensi.findUnique({
             where: { absen: Number(absen) },
-            data: {
-                ...(status !== undefined && { status: status.charAt(0).toUpperCase() + status.slice(1) }),
-                updateAt: new Date(),
-            },
-            include: {
-                Siswa: {
-                    select: {
-                        alfa: true,
-                        sakit: true,
-                        izin: true,
-                        hadir: true,
-                        uuid: true,
-                        hadirtelat: true,
+        });
+
+        if (existingDataAbsensi.status !== status) {
+            const updatedDataAbsensi = await Gprisma.dataAbsensi.update({
+                where: { absen: Number(absen) },
+                data: {
+                    ...(status !== undefined && { status: status.charAt(0).toUpperCase() + status.slice(1) }),
+                    updateAt: new Date(),
+                },
+                include: {
+                    Siswa: {
+                        select: {
+                            alfa: true,
+                            sakit: true,
+                            izin: true,
+                            hadir: true,
+                            uuid: true,
+                            hadirtelat: true,
+                        },
                     },
                 },
-            },
-        });
-        GSheetAPI(absen);
-        return NextResponse.json({ updatedSiswa, updatedDataAbsensi }, { status: 200 });
+            });
+            GSheetAPI(absen);
+            return NextResponse.json({ updatedSiswa, updatedDataAbsensi }, { status: 200 });
+        } else {
+            return NextResponse.json({ updatedSiswa }, { status: 200 });
+        }
+        // return NextResponse.json({ updatedSiswa, updatedDataAbsensi }, { status: 200 });
     } catch (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
