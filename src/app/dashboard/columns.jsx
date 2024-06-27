@@ -6,10 +6,12 @@ import { Settings, Eye, ArrowUpDown, BadgeCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-
+import { auth } from "@/auth";
 import { useState } from "react";
 import axios from "axios";
+
+// const session = await auth();
+// const isAdmin = session?.user?.role === "ADMIN";
 
 export const columns = [
   {
@@ -100,23 +102,21 @@ export const columns = [
       const dataabsensi = row.original;
       const [open, setOpen] = useState(false);
       const [open2, setOpen2] = useState(false);
-      const [status, setStatus] = useState(dataabsensi.status);
+      const [status, setStatus] = useState("");
       const [uuid, setUUID] = useState(dataabsensi.uuid);
       const handleUpdate = async () => {
         try {
           await axios.put("/api/absen", {
             absen: dataabsensi.absen,
             status: status.toLocaleLowerCase(),
-            uuid: uuid,
+            // uuid: uuid,
           });
-
           setOpen2(true);
           setTimeout(() => setOpen2(false));
         } catch (error) {
           console.error(error.message);
         }
       };
-
       const formatLocalTime = (dateString) => {
         const options = { timeZone: "Asia/Jakarta", weekday: "long", year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit" };
         return new Date(dateString).toLocaleString("id-ID", options);
@@ -166,15 +166,17 @@ export const columns = [
                   <DialogDescription>Edit Data Absensi Seperti uuid dan Status Siswa</DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4">
-                  <Input type="text" placeholder={status} className="w-full" onChange={(e) => setStatus(e.target.value)} />
-                  <Input type="text" placeholder={dataabsensi.Siswa.uuid} className="w-full" onChange={(e) => setUUID(e.target.value)} />
+                  <Input required type="text" placeholder={status} className="w-full" onChange={(e) => setStatus(e.target.value)} />
                 </div>
                 <DialogFooter>
                   <Button
                     variant="default"
                     onClick={() => {
-                      handleUpdate();
+                      if (status) {
+                        handleUpdate();
+                      }
                     }}
+                    disabled={!status}
                   >
                     Update
                   </Button>

@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle, Dialog
 import axios from "axios";
 
 export function DataTable(props) {
-  const { columns, data } = props;
+  const { columns, data} = props;
   const [tableData, setTableData] = React.useState(data);
   const [sorting, setSorting] = React.useState([]);
   const [columnFilters, setColumnFilters] = React.useState([]);

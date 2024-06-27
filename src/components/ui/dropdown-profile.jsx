@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { auth } from "@/auth";
 
 export default async function DropdownProfile({ session }) {
+  // console.log(session)
   return (
     <DropdownMenu className="bg-background">
       <DropdownMenuTrigger asChild>
@@ -23,7 +24,19 @@ export default async function DropdownProfile({ session }) {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        {(session.user.role === "SEKRE" || session.user.role === "ADMIN") && (
+        {session.user.role === "ADMIN" && (
+          <>
+            <DropdownMenuItem>
+              <Link href={`/dashboard`}>Dashboard</Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              <Link href={`/admin`}>Admin</Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+          </>
+        )}
+        {session.user.role === "SEKRE" && (
           <>
             <DropdownMenuItem>
               <Link href={`/dashboard`}>Dashboard</Link>
