@@ -40,7 +40,6 @@ const options = {
                     token.id = user.id
                     return token
                 }
-                console.log(userRole)
                 return {
                     id: userRole.id,
                     email: userRole.email,
