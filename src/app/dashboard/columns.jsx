@@ -10,9 +10,6 @@ import { auth } from "@/auth";
 import { useState } from "react";
 import axios from "axios";
 
-// const session = await auth();
-// const isAdmin = session?.user?.role === "ADMIN";
-
 export const columns = [
   {
     accessorKey: "absen",
@@ -37,38 +34,6 @@ export const columns = [
     },
     cell: (info) => String(info.getValue()),
     enableResizing: true,
-  },
-  {
-    accessorKey: "hadir",
-    header: "Hadir",
-    cell: (info) => {
-      const value = parseInt(info.row.original.Siswa.hadir);
-      return isNaN(value) ? 0 : value;
-    },
-  },
-  {
-    accessorKey: "izin",
-    header: "Izin",
-    cell: (info) => {
-      const value = parseInt(info.row.original.Siswa.izin);
-      return isNaN(value) ? 0 : value;
-    },
-  },
-  {
-    accessorKey: "sakit",
-    header: "Sakit",
-    cell: (info) => {
-      const value = parseInt(info.row.original.Siswa.sakit);
-      return isNaN(value) ? 0 : value;
-    },
-  },
-  {
-    accessorKey: "alfa",
-    header: "Alfa",
-    cell: (info) => {
-      const value = parseInt(info.row.original.Siswa.alfa);
-      return isNaN(value) ? 0 : value;
-    },
   },
   {
     accessorKey: "updateAt",
@@ -103,13 +68,11 @@ export const columns = [
       const [open, setOpen] = useState(false);
       const [open2, setOpen2] = useState(false);
       const [status, setStatus] = useState("");
-      const [uuid, setUUID] = useState(dataabsensi.uuid);
       const handleUpdate = async () => {
         try {
           await axios.put("/api/absen", {
             absen: dataabsensi.absen,
             status: status.toLocaleLowerCase(),
-            // uuid: uuid,
           });
           setOpen2(true);
           setTimeout(() => setOpen2(false));
@@ -137,15 +100,6 @@ export const columns = [
                   <p>Absen: {dataabsensi.absen}</p>
                   <p>Nama: {dataabsensi.nama}</p>
                   <p>Status: {dataabsensi.status}</p>
-                  {dataabsensi.Siswa ? (
-                    Object.entries(dataabsensi.Siswa).map(([key, value]) => (
-                      <p key={key}>
-                        {key.charAt(0).toUpperCase() + key.slice(1)}: {value}
-                      </p>
-                    ))
-                  ) : (
-                    <p>Tidak ada data siswa</p>
-                  )}
                   <p>Update: {formatLocalTime(dataabsensi.updateAt)}</p>
                   <p>Create: {formatLocalTime(dataabsensi.createAt)}</p>
                 </div>

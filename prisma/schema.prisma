@@ -17,11 +17,6 @@ datasource db {
 model Siswa {
   absen       Int          @id //@default(autoincrement())
   nama        String
-  alfa        Int          @default(0)
-  sakit       Int          @default(0)
-  izin        Int          @default(0)
-  hadir       Int          @default(0)
-  hadirtelat  Int          @default(0)
   uuid        String       @default("uuid")
   DataAbsensi DataAbsensi[]
 }

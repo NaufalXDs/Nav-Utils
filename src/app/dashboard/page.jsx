@@ -22,11 +22,6 @@ async function getData() {
         updateAt: true,
         Siswa: {
           select: {
-            alfa: true,
-            sakit: true,
-            izin: true,
-            hadir: true,
-            hadirtelat: true,
             uuid: true
           },
         },
